@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Recuperar contraseña | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="contraseñaOlvidada.css">
+</head>
+<body>
+  <a class="volver" href="iniciarsesion.html"><span class="material-icons" aria-hidden="true">arrow_back</span>Iniciar sesión</a>
+  <main class="tarjeta">
+    <header class="encabezado">
+      <p>PORTALINK · RECUPERACIÓN</p>
+      <h1>¿Olvidaste tu contraseña?</h1>
+      <span>Escribe el correo asociado a tu cuenta y te enviaremos un enlace para crear una nueva contraseña.</span>
+    </header>
+    <div class="mensaje-formulario" id="mensaje" role="status" aria-live="polite" hidden></div>
+    <form id="formulario" action="solicitar_recuperacion.php" method="post">
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" name="correo" autocomplete="email" maxlength="150" required>
+      </div>
+      <button class="boton-principal" id="boton" type="submit">Enviarme un enlace</button>
+    </form>
+  </main>
+  <script>
+    const formulario = document.getElementById("formulario");
+    const boton = document.getElementById("boton");
+    const mensaje = document.getElementById("mensaje");
+
+    formulario.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      mensaje.hidden = true;
+      mensaje.className = "mensaje-formulario";
+      boton.disabled = true;
+      boton.textContent = "Enviando...";
+      try {
+        const respuesta = await fetch(formulario.action, {
+          method: "POST",
+          body: new FormData(formulario),
+          headers: { Accept: "application/json" }
+        });
+        const resultado = await respuesta.json();
+        if (!respuesta.ok || !resultado.success) {
+          throw new Error(resultado.message || "No se pudo procesar la solicitud.");
+        }
+        mensaje.textContent = resultado.message;
+        mensaje.classList.add("exito");
+        mensaje.hidden = false;
+        formulario.reset();
+      } catch (error) {
+        mensaje.textContent = error instanceof Error
+          ? error.message
+          : "No se pudo conectar con el servidor. Inténtalo de nuevo.";
+        mensaje.hidden = false;
+      } finally {
+        boton.disabled = false;
+        boton.textContent = "Enviarme un enlace";
+      }
+    });
+  </script>
+</body>
+</html>

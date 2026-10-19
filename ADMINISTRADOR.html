@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Administración | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ADMINISTRACION.css">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="index.html">PORTALINK <span>ADMIN</span></a>
+    <div class="usuario">
+      <span>Administración: <strong id="nombreAdmin">Administrador</strong></span>
+      <button class="boton-secundario" id="cerrarSesion" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="contenido">
+    <section class="encabezado">
+      <p class="sobretitulo">PANEL DE CONTROL</p>
+      <h1>Administración</h1>
+      <p>Gestiona las cuentas de estudiantes y orientadores y consulta el estado de las citas. Los motivos de consulta y descargos privados no se muestran en este panel.</p>
+    </section>
+
+    <div class="mensaje" id="mensaje" role="status" aria-live="polite" hidden></div>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <p class="sobretitulo">CUENTAS</p>
+          <h2>Psicorientadores</h2>
+        </div>
+        <button class="boton-principal" id="nuevoOrientador" type="button">Agregar orientador</button>
+      </div>
+
+      <form class="formulario-orientador" id="formularioOrientador" hidden>
+        <div class="encabezado-formulario">
+          <h3 id="tituloFormulario">Agregar psicorientador</h3>
+          <button class="boton-cerrar" id="cancelarOrientador" type="button" aria-label="Cerrar formulario">×</button>
+        </div>
+        <input type="hidden" name="id">
+        <div class="campos-formulario">
+          <label>Usuario
+            <input name="usuario" autocomplete="off" maxlength="80" required>
+          </label>
+          <label>Nombre completo
+            <input name="nombre" maxlength="150" required>
+          </label>
+          <label>Correo
+            <input type="email" name="correo" maxlength="150" required>
+          </label>
+          <label>Foto (URL https)
+            <input type="url" name="foto_url" maxlength="500" placeholder="https://...">
+          </label>
+          <label class="ancho-completo">Descripción para estudiantes
+            <textarea name="descripcion" rows="3" maxlength="5000" required></textarea>
+          </label>
+          <label class="ancho-completo">Grados atendidos (separa con coma; ej. 9, 10, 11)
+            <input name="grados" placeholder="9, 10, 11" maxlength="200" required>
+          </label>
+          <fieldset class="ancho-completo modalidades">
+            <legend>Modalidades disponibles</legend>
+            <label><input type="checkbox" name="permite_virtual" checked> Virtual</label>
+            <label><input type="checkbox" name="permite_presencial" checked> Presencial</label>
+          </fieldset>
+          <label class="ancho-completo">Contraseña inicial (mínimo 12 caracteres)
+            <input type="password" name="contrasena" autocomplete="new-password" minlength="12">
+            <small id="ayudaContrasena">Obligatoria al crear. Déjala vacía al editar para no cambiarla.</small>
+          </label>
+        </div>
+        <button class="boton-principal" type="submit">Guardar orientador</button>
+      </form>
+
+      <div class="tabla-contenedor">
+        <table>
+          <thead><tr><th>Nombre / usuario</th><th>Correo</th><th>Grados</th><th>Modalidades</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tablaOrientadores"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <p class="sobretitulo">CUENTAS</p>
+          <h2>Estudiantes</h2>
+        </div>
+        <button class="boton-principal" id="nuevoEstudiante" type="button">Agregar estudiante</button>
+      </div>
+      <p class="ayuda">Puedes actualizar los datos personales y de contacto, cambiar una contraseña sin consultar la anterior y activar/desactivar una cuenta. Las cuentas desactivadas no pueden iniciar sesión ni solicitar citas.</p>
+      <form class="formulario-orientador" id="formularioEstudiante" hidden>
+        <div class="encabezado-formulario">
+          <h3>Crear cuenta de estudiante</h3>
+          <button class="boton-cerrar" id="cancelarEstudiante" type="button" aria-label="Cerrar formulario">×</button>
+        </div>
+        <div class="campos-formulario">
+          <label>Nombre
+            <input name="nombre" maxlength="100" required>
+          </label>
+          <label>Apellidos
+            <input name="apellidos" maxlength="150" required>
+          </label>
+          <label>Código de estudiante
+            <input name="codigo_estudiante" maxlength="30" required>
+          </label>
+          <label>Grado
+            <input name="grado" maxlength="20" required>
+          </label>
+          <label>Correo
+            <input type="email" name="correo" maxlength="150" required>
+          </label>
+          <label>Teléfono
+            <input type="tel" name="telefono" maxlength="20" required>
+          </label>
+          <label>Fecha de nacimiento
+            <input type="date" name="fecha_nacimiento" required>
+          </label>
+          <label>Contraseña inicial (12 caracteres, mayúscula, minúscula, número y símbolo)
+            <input type="password" name="contrasena" autocomplete="new-password" minlength="12" required>
+          </label>
+        </div>
+        <button class="boton-principal" type="submit">Crear cuenta</button>
+      </form>
+      <div class="tabla-contenedor">
+        <table>
+          <thead><tr><th>Nombre</th><th>Apellidos</th><th>Código</th><th>Correo</th><th>Grado</th><th>Teléfono</th><th>Nacimiento</th><th>Contraseña nueva (opcional)</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tablaEstudiantes"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <p class="sobretitulo">AGENDA</p>
+          <h2>Estado de citas</h2>
+        </div>
+      </div>
+      <p class="ayuda">Este resumen muestra únicamente horario, modalidad, participantes y estado; no incluye motivos de consulta ni descargos.</p>
+      <div class="tabla-contenedor">
+        <table>
+          <thead><tr><th>Fecha</th><th>Estudiante</th><th>Orientador</th><th>Modalidad</th><th>Estado</th></tr></thead>
+          <tbody id="tablaCitas"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="portalink.js"></script>
+  <script>
+    const formulario = document.getElementById("formularioOrientador");
+    const mensaje = document.getElementById("mensaje");
+
+    function botonEstado(etiqueta, id, activo, accion) {
+      return `<button class="boton-secundario boton-pequeno" type="button"
+        data-accion="${accion}" data-id="${Number(id)}" data-activo="${activo ? 0 : 1}">
+        ${etiqueta}</button>`;
+    }
+
+    function renderizarOrientadores(elemento, orientadores) {
+      elemento.innerHTML = orientadores.length ? orientadores.map((persona) => `
+        <tr>
+          <td><strong>${Portalink.escapar(persona.nombre)}</strong><small>@${Portalink.escapar(persona.usuario)}</small></td>
+          <td>${Portalink.escapar(persona.correo)}</td>
+          <td>${Portalink.escapar((persona.grados || "").split(",").join(", ") || "Sin asignar")}</td>
+          <td>${Number(persona.permite_virtual) ? "Virtual" : ""}${Number(persona.permite_virtual) && Number(persona.permite_presencial) ? " · " : ""}${Number(persona.permite_presencial) ? "Presencial" : ""}</td>
+          <td><span class="estado ${Number(persona.activo) ? "activo" : "inactivo"}">${Number(persona.activo) ? "Activo" : "Inactivo"}</span></td>
+          <td class="acciones-tabla">
+            <button class="boton-secundario boton-pequeno" type="button" data-editar="${Number(persona.id)}">Editar</button>
+            ${botonEstado(Number(persona.activo) ? "Desactivar" : "Activar", persona.id, Number(persona.activo), "estado_orientador")}
+          </td>
+        </tr>
+      `).join("") : '<tr><td colspan="6" class="celda-vacia">Todavía no hay orientadores registrados.</td></tr>';
+
+      elemento.querySelectorAll("[data-editar]").forEach((boton) => {
+        boton.addEventListener("click", () => {
+          const persona = orientadores.find((item) => Number(item.id) === Number(boton.dataset.editar));
+          if (!persona) return;
+          formulario.elements.id.value = persona.id;
+          formulario.elements.usuario.value = persona.usuario;
+          formulario.elements.nombre.value = persona.nombre;
+          formulario.elements.correo.value = persona.correo;
+          formulario.elements.foto_url.value = persona.foto_url || "";
+          formulario.elements.descripcion.value = persona.descripcion;
+          formulario.elements.grados.value = persona.grados || "";
+          formulario.elements.permite_virtual.checked = Number(persona.permite_virtual) === 1;
+          formulario.elements.permite_presencial.checked = Number(persona.permite_presencial) === 1;
+          formulario.elements.contrasena.required = false;
+          document.getElementById("tituloFormulario").textContent = "Editar psicorientador";
+          formulario.hidden = false;
+          formulario.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      elemento.querySelectorAll("[data-accion='estado_orientador']").forEach((boton) => {
+        boton.addEventListener("click", () => cambiarEstado(boton));
+      });
+    }
+
+    function renderizarEstudiantes(estudiantes) {
+      const cuerpo = document.getElementById("tablaEstudiantes");
+      cuerpo.innerHTML = estudiantes.length ? estudiantes.map((estudiante) => `
+        <tr>
+          <td><input class="celda-input" type="text" aria-label="Nombre de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.nombre)}" data-nombre="${Number(estudiante.id)}" maxlength="100"></td>
+          <td><input class="celda-input" type="text" aria-label="Apellidos de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.apellidos)}" data-apellidos="${Number(estudiante.id)}" maxlength="150"></td>
+          <td><input class="celda-input codigo-input" type="text" aria-label="Código de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.codigo_estudiante)}" data-codigo="${Number(estudiante.id)}" maxlength="30"></td>
+          <td><input class="celda-input" type="email" aria-label="Correo de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.correo)}" data-correo="${Number(estudiante.id)}"></td>
+          <td><input class="celda-input grado-input" type="text" aria-label="Grado de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.grado)}" data-grado="${Number(estudiante.id)}" maxlength="20"></td>
+          <td><input class="celda-input telefono-input" type="tel" aria-label="Teléfono de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(estudiante.telefono)}" data-telefono="${Number(estudiante.id)}" maxlength="20"></td>
+          <td><input class="celda-input fecha-input" type="date" aria-label="Fecha de nacimiento de ${Portalink.escapar(estudiante.nombre)}" value="${Portalink.escapar(String(estudiante.fecha_nacimiento).slice(0, 10))}" data-fecha="${Number(estudiante.id)}"></td>
+          <td><input class="celda-input" type="password" aria-label="Nueva contraseña de ${Portalink.escapar(estudiante.nombre)}" autocomplete="new-password" minlength="12" data-clave-nueva="${Number(estudiante.id)}"></td>
+          <td><span class="estado ${Number(estudiante.activo) ? "activo" : "inactivo"}">${Number(estudiante.activo) ? "Activo" : "Inactivo"}</span></td>
+          <td class="acciones-tabla">
+            <button class="boton-secundario boton-pequeno" type="button" data-guardar-estudiante="${Number(estudiante.id)}">Guardar</button>
+            ${botonEstado(Number(estudiante.activo) ? "Desactivar" : "Activar", estudiante.id, Number(estudiante.activo), "estado_estudiante")}
+          </td>
+        </tr>
+      `).join("") : '<tr><td colspan="10" class="celda-vacia">Todavía no hay estudiantes registrados.</td></tr>';
+
+      cuerpo.querySelectorAll("[data-guardar-estudiante]").forEach((boton) => {
+        boton.addEventListener("click", async () => {
+          boton.disabled = true;
+          try {
+            const id = Number(boton.dataset.guardarEstudiante);
+            const nombre = cuerpo.querySelector(`[data-nombre="${id}"]`).value;
+            const apellidos = cuerpo.querySelector(`[data-apellidos="${id}"]`).value;
+            const codigo_estudiante = cuerpo.querySelector(`[data-codigo="${id}"]`).value;
+            const correo = cuerpo.querySelector(`[data-correo="${id}"]`).value;
+            const grado = cuerpo.querySelector(`[data-grado="${id}"]`).value;
+            const telefono = cuerpo.querySelector(`[data-telefono="${id}"]`).value;
+            const fecha_nacimiento = cuerpo.querySelector(`[data-fecha="${id}"]`).value;
+            const contrasena = cuerpo.querySelector(`[data-clave-nueva="${id}"]`).value;
+            const resultado = await Portalink.api("actualizar_estudiante", {
+              id, nombre, apellidos, codigo_estudiante, correo, grado,
+              telefono, fecha_nacimiento, contrasena
+            });
+            Portalink.mostrarMensaje(mensaje, resultado.message, "exito");
+            await cargarDatos();
+          } catch (error) {
+            Portalink.mostrarMensaje(mensaje, error.message);
+            boton.disabled = false;
+          }
+        });
+      });
+      cuerpo.querySelectorAll("[data-accion='estado_estudiante']").forEach((boton) => {
+        boton.addEventListener("click", () => cambiarEstado(boton));
+      });
+    }
+
+    function renderizarCitas(citas) {
+      const cuerpo = document.getElementById("tablaCitas");
+      cuerpo.innerHTML = citas.length ? citas.map((cita) => `
+        <tr>
+          <td>${Portalink.fechaLegible(cita.fecha_inicio, { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
+          <td>${Portalink.escapar(cita.estudiante_nombre)} ${Portalink.escapar(cita.apellidos)}</td>
+          <td>${Portalink.escapar(cita.orientador_nombre)}</td>
+          <td>${Portalink.escapar(cita.modalidad)}</td>
+          <td><span class="estado ${Portalink.escapar(cita.estado)}">${Portalink.escapar(cita.estado)}</span></td>
+        </tr>
+      `).join("") : '<tr><td colspan="5" class="celda-vacia">No hay citas registradas.</td></tr>';
+    }
+
+    async function cambiarEstado(boton) {
+      boton.disabled = true;
+      try {
+        const resultado = await Portalink.api(boton.dataset.accion, {
+          id: Number(boton.dataset.id),
+          activo: Number(boton.dataset.activo)
+        });
+        Portalink.mostrarMensaje(mensaje, resultado.message, "exito");
+        await cargarDatos();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+        boton.disabled = false;
+      }
+    }
+
+    async function cargarDatos() {
+      const datos = await Portalink.api("datos_panel");
+      renderizarOrientadores(document.getElementById("tablaOrientadores"), datos.orientadores);
+      renderizarEstudiantes(datos.estudiantes);
+      renderizarCitas(datos.citas);
+    }
+
+    document.getElementById("nuevoOrientador").addEventListener("click", () => {
+      formulario.reset();
+      formulario.elements.id.value = "";
+      formulario.elements.contrasena.required = true;
+      formulario.elements.permite_virtual.checked = true;
+      formulario.elements.permite_presencial.checked = true;
+      document.getElementById("tituloFormulario").textContent = "Agregar psicorientador";
+      formulario.hidden = false;
+      formulario.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    const formularioEstudiante = document.getElementById("formularioEstudiante");
+    document.getElementById("nuevoEstudiante").addEventListener("click", () => {
+      formularioEstudiante.reset();
+      formularioEstudiante.hidden = false;
+      formularioEstudiante.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.getElementById("cancelarEstudiante").addEventListener("click", () => {
+      formularioEstudiante.hidden = true;
+      formularioEstudiante.reset();
+    });
+    formularioEstudiante.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = formularioEstudiante.querySelector('[type="submit"]');
+      boton.disabled = true;
+      const campos = new FormData(formularioEstudiante);
+      try {
+        const resultado = await Portalink.api("crear_estudiante", {
+          nombre: campos.get("nombre"),
+          apellidos: campos.get("apellidos"),
+          codigo_estudiante: campos.get("codigo_estudiante"),
+          grado: campos.get("grado"),
+          correo: campos.get("correo"),
+          telefono: campos.get("telefono"),
+          fecha_nacimiento: campos.get("fecha_nacimiento"),
+          contrasena: campos.get("contrasena")
+        });
+        Portalink.mostrarMensaje(mensaje, resultado.message, "exito");
+        formularioEstudiante.hidden = true;
+        formularioEstudiante.reset();
+        await cargarDatos();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+      } finally {
+        boton.disabled = false;
+      }
+    });
+
+    document.getElementById("cancelarOrientador").addEventListener("click", () => {
+      formulario.hidden = true;
+      formulario.reset();
+    });
+
+    formulario.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      const boton = formulario.querySelector('[type="submit"]');
+      boton.disabled = true;
+      const campos = new FormData(formulario);
+      try {
+        const resultado = await Portalink.api("guardar_orientador", {
+          id: campos.get("id") ? Number(campos.get("id")) : 0,
+          usuario: campos.get("usuario"),
+          nombre: campos.get("nombre"),
+          correo: campos.get("correo"),
+          descripcion: campos.get("descripcion"),
+          foto_url: campos.get("foto_url"),
+          grados: String(campos.get("grados")).split(",").map((grado) => grado.trim()).filter(Boolean),
+          permite_virtual: formulario.elements.permite_virtual.checked,
+          permite_presencial: formulario.elements.permite_presencial.checked,
+          contrasena: campos.get("contrasena")
+        });
+        Portalink.mostrarMensaje(mensaje, resultado.message, "exito");
+        formulario.hidden = true;
+        formulario.reset();
+        await cargarDatos();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+      } finally {
+        boton.disabled = false;
+      }
+    });
+
+    document.getElementById("cerrarSesion").addEventListener("click", async () => {
+      try {
+        await Portalink.cerrarSesion();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    });
+
+    (async function iniciar() {
+      try {
+        const sesion = await Portalink.obtenerSesion("admin");
+        document.getElementById("nombreAdmin").textContent = sesion.nombre;
+        await cargarDatos();
+      } catch (error) {
+        if (!mensaje.hidden) return;
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    })();
+  </script>
+</body>
+</html>

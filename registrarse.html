@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  >
+  <link rel="stylesheet" href="registrarse.css">
+</head>
+<body>
+  <a class="volver" href="index.html" aria-label="Volver al inicio">
+    <span class="material-icons" aria-hidden="true">arrow_back</span>
+    Volver
+  </a>
+
+  <main class="registro">
+    <header class="encabezado">
+      <p>PORTALINK · REGISTRO</p>
+      <h1>Registrarse</h1>
+    </header>
+
+    <div
+      class="mensaje-formulario"
+      id="mensajeFormulario"
+      role="status"
+      aria-live="polite"
+      hidden
+    >
+      <span class="material-icons" id="iconoMensaje" aria-hidden="true"></span>
+      <span id="textoMensajeFormulario"></span>
+    </div>
+
+    <form action="guardar_estudiante.php" method="post">
+      <div class="campos">
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre"
+                 autocomplete="given-name" maxlength="100" required>
+        </div>
+
+        <div class="campo">
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" name="apellidos"
+                 autocomplete="family-name" maxlength="150" required>
+        </div>
+
+        <div class="campo">
+          <label for="codigo">Código de estudiante</label>
+          <input type="text" id="codigo" name="codigo_estudiante"
+                 autocomplete="off" maxlength="30" required>
+        </div>
+
+        <div class="campo">
+          <label for="grado">Grado</label>
+          <input type="text" id="grado" name="grado"
+                 placeholder="Ej. 9.º" maxlength="20" required>
+        </div>
+
+        <div class="campo">
+          <label for="fecha">Fecha de nacimiento</label>
+          <input type="date" id="fecha" name="fecha_nacimiento"
+                 autocomplete="bday" required>
+        </div>
+
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono"
+                 autocomplete="tel" maxlength="20" required>
+        </div>
+
+        <div class="campo campo-completo">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo"
+                 autocomplete="email" maxlength="150" required>
+        </div>
+
+        <div
+          class="campo campo-completo verificacion-correo"
+          id="verificacionCorreo"
+          hidden
+        >
+          <span class="etiqueta">Verificar correo</span>
+
+          <button class="boton-verificacion" type="button" id="enviarCodigo">
+            Mandar código
+          </button>
+
+          <div class="codigo-verificacion" id="ingresoCodigo" hidden>
+            <label for="codigoCorreo">Código de verificación</label>
+            <input
+              type="text"
+              id="codigoCorreo"
+              autocomplete="one-time-code"
+              inputmode="numeric"
+              maxlength="6"
+              pattern="[0-9]{6}"
+            >
+            <button class="boton-verificacion" type="button" id="verificarCodigo">
+              Verificar código
+            </button>
+          </div>
+        </div>
+
+        <div class="campo campo-completo">
+          <label for="contrasena">Contraseña</label>
+          <input
+            type="password"
+            id="contrasena"
+            name="contrasena"
+            autocomplete="new-password"
+            required
+          >
+          <ul class="reglas-contrasena" aria-live="polite">
+            <li class="regla" id="reglaLongitud">Mínimo 8 caracteres</li>
+            <li class="regla" id="reglaMinuscula">Una letra minúscula</li>
+            <li class="regla" id="reglaMayuscula">Una letra mayúscula</li>
+            <li class="regla" id="reglaNumero">Un número</li>
+            <li class="regla" id="reglaSimbolo">Un símbolo, por ejemplo ! o #</li>
+          </ul>
+        </div>
+
+        <div class="campo campo-completo">
+          <label for="confirmarContrasena">Confirmar contraseña</label>
+          <input
+            type="password"
+            id="confirmarContrasena"
+            name="confirmar_contrasena"
+            autocomplete="new-password"
+            required
+          >
+          <p class="ayuda" id="mensajeConfirmacion" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <button class="registrarse" id="botonRegistro" type="submit" disabled>
+        Registrarse
+      </button>
+    </form>
+  </main>
+
+  <script>
+    const formulario = document.querySelector(".registro form");
+    const correo = document.getElementById("correo");
+    const seccionVerificacion =
+      document.getElementById("verificacionCorreo");
+    const botonEnviar = document.getElementById("enviarCodigo");
+    const ingresoCodigo = document.getElementById("ingresoCodigo");
+    const codigoCorreo = document.getElementById("codigoCorreo");
+    const botonVerificar = document.getElementById("verificarCodigo");
+    const botonRegistro = document.getElementById("botonRegistro");
+
+    const contrasena = document.getElementById("contrasena");
+    const confirmarContrasena =
+      document.getElementById("confirmarContrasena");
+    const mensajeConfirmacion =
+      document.getElementById("mensajeConfirmacion");
+
+    const mensajeFormulario =
+      document.getElementById("mensajeFormulario");
+    const iconoMensaje = document.getElementById("iconoMensaje");
+    const textoMensajeFormulario =
+      document.getElementById("textoMensajeFormulario");
+
+    let correoSolicitado = "";
+    let correoVerificado = "";
+
+    const erroresFormulario = {
+      codigo_duplicado: "Ese código de estudiante ya está registrado.",
+      correo_duplicado: "Ese correo ya tiene una cuenta registrada.",
+      campos: "Completa todos los campos obligatorios.",
+      correo: "Escribe un correo electrónico válido.",
+      fecha: "La fecha de nacimiento no es válida.",
+      contrasena: "La contraseña no cumple todos los requisitos.",
+      confirmar: "Las contraseñas no coinciden.",
+      correo_no_verificado: "Verifica tu correo antes de crear la cuenta.",
+      general: "No se pudo completar el registro. Inténtalo nuevamente."
+    };
+
+    function mostrarMensaje(texto, tipo) {
+      mensajeFormulario.className = `mensaje-formulario ${tipo}`;
+      iconoMensaje.textContent =
+        tipo === "exito" ? "check_circle" : "error_outline";
+      textoMensajeFormulario.textContent = texto;
+      mensajeFormulario.hidden = false;
+    }
+
+    async function enviarPost(url, campos) {
+      const datos = new FormData();
+
+      for (const [nombre, valor] of Object.entries(campos)) {
+        datos.append(nombre, valor);
+      }
+
+      const respuesta = await fetch(url, {
+        method: "POST",
+        body: datos
+      });
+
+      let resultado;
+
+      try {
+        resultado = await respuesta.json();
+      } catch {
+        throw new Error(
+          "El servidor no devolvió una respuesta válida. Comprueba que PHP esté funcionando."
+        );
+      }
+
+      if (!respuesta.ok || !resultado.success) {
+        throw new Error(resultado.message || "Ocurrió un error.");
+      }
+
+      return resultado;
+    }
+
+    function validarContrasenas() {
+      const valor = contrasena.value;
+
+      const reglas = {
+        reglaLongitud: valor.length >= 8,
+        reglaMinuscula: /[a-z]/.test(valor),
+        reglaMayuscula: /[A-Z]/.test(valor),
+        reglaNumero: /[0-9]/.test(valor),
+        reglaSimbolo: /[^A-Za-z0-9]/.test(valor)
+      };
+
+      for (const [id, cumple] of Object.entries(reglas)) {
+        document.getElementById(id).classList.toggle("cumple", cumple);
+      }
+
+      const valida = Object.values(reglas).every(Boolean);
+      const valorConfirmacion = confirmarContrasena.value;
+      const coinciden =
+        valorConfirmacion !== "" && valorConfirmacion === valor;
+
+      contrasena.setCustomValidity(
+        valor !== "" && !valida
+          ? "Usa al menos 8 caracteres, una minúscula, una mayúscula, un número y un símbolo."
+          : ""
+      );
+
+      confirmarContrasena.setCustomValidity(
+        valorConfirmacion !== "" && !coinciden
+          ? "Las contraseñas no coinciden."
+          : ""
+      );
+
+      if (valorConfirmacion === "") {
+        mensajeConfirmacion.textContent = "";
+        mensajeConfirmacion.className = "ayuda";
+      } else if (coinciden) {
+        mensajeConfirmacion.textContent = "Las contraseñas coinciden.";
+        mensajeConfirmacion.className = "ayuda coincide";
+      } else {
+        mensajeConfirmacion.textContent = "Las contraseñas no coinciden.";
+        mensajeConfirmacion.className = "ayuda no-coincide";
+      }
+
+      return valida;
+    }
+
+    function actualizarEstadoRegistro() {
+      const contrasenaValida = validarContrasenas();
+      const contrasenasCoinciden =
+        confirmarContrasena.value !== "" &&
+        confirmarContrasena.value === contrasena.value;
+      const correoEstaVerificado =
+        correoVerificado !== "" &&
+        correo.value.trim() === correoVerificado;
+
+      botonRegistro.disabled =
+        !correoEstaVerificado ||
+        !contrasenaValida ||
+        !contrasenasCoinciden;
+    }
+
+    const parametros = new URLSearchParams(window.location.search);
+    const codigoError = parametros.get("error");
+
+    if (erroresFormulario[codigoError]) {
+      mostrarMensaje(erroresFormulario[codigoError], "error");
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+    }
+
+    correo.addEventListener("input", function () {
+      const valor = correo.value.trim();
+      const esValido = valor !== "" && correo.validity.valid;
+
+      seccionVerificacion.hidden = !esValido;
+      mensajeFormulario.hidden = true;
+
+      if (correoSolicitado && valor !== correoSolicitado) {
+        correoSolicitado = "";
+        correoVerificado = "";
+        ingresoCodigo.hidden = true;
+        codigoCorreo.value = "";
+        botonEnviar.disabled = false;
+        botonEnviar.textContent = "Mandar código";
+      }
+
+      if (correoVerificado && valor !== correoVerificado) {
+        correoVerificado = "";
+      }
+
+      actualizarEstadoRegistro();
+    });
+
+    contrasena.addEventListener("input", actualizarEstadoRegistro);
+    confirmarContrasena.addEventListener("input", actualizarEstadoRegistro);
+
+    botonEnviar.addEventListener("click", async function () {
+      if (!correo.checkValidity()) {
+        correo.reportValidity();
+        return;
+      }
+
+      const correoDestino = correo.value.trim();
+      botonEnviar.disabled = true;
+      botonEnviar.textContent = "Enviando...";
+      mensajeFormulario.hidden = true;
+
+      try {
+        const resultado = await enviarPost("enviar_codigo.php", {
+          correo: correoDestino
+        });
+
+        correoSolicitado = correoDestino;
+        correoVerificado = "";
+        codigoCorreo.value = "";
+        ingresoCodigo.hidden = false;
+        codigoCorreo.focus();
+
+        mostrarMensaje(resultado.message, "exito");
+      } catch (error) {
+        mostrarMensaje(error.message, "error");
+      } finally {
+        botonEnviar.disabled = false;
+        botonEnviar.textContent = "Mandar código";
+        actualizarEstadoRegistro();
+      }
+    });
+
+    botonVerificar.addEventListener("click", async function () {
+      if (!codigoCorreo.checkValidity()) {
+        codigoCorreo.reportValidity();
+        return;
+      }
+
+      const correoDestino = correo.value.trim();
+
+      if (!correoSolicitado || correoDestino !== correoSolicitado) {
+        mostrarMensaje(
+          "Solicita un código para este correo antes de verificarlo.",
+          "error"
+        );
+        return;
+      }
+
+      botonVerificar.disabled = true;
+      botonVerificar.textContent = "Verificando...";
+      mensajeFormulario.hidden = true;
+
+      try {
+        const resultado = await enviarPost("verificar_codigo.php", {
+          correo: correoDestino,
+          codigo_verificacion: codigoCorreo.value.trim()
+        });
+
+        correoVerificado = correoDestino;
+        mostrarMensaje(resultado.message, "exito");
+      } catch (error) {
+        mostrarMensaje(error.message, "error");
+      } finally {
+        botonVerificar.disabled = false;
+        botonVerificar.textContent = "Verificar código";
+        actualizarEstadoRegistro();
+      }
+    });
+
+    formulario.addEventListener("submit", function (evento) {
+      const contrasenaValida = validarContrasenas();
+      const contrasenasCoinciden =
+        confirmarContrasena.value !== "" &&
+        confirmarContrasena.value === contrasena.value;
+      const correoEstaVerificado =
+        correoVerificado !== "" &&
+        correo.value.trim() === correoVerificado;
+
+      if (!correoEstaVerificado) {
+        evento.preventDefault();
+        mostrarMensaje("Primero debes verificar tu correo.", "error");
+        return;
+      }
+
+      if (!contrasenaValida) {
+        evento.preventDefault();
+        contrasena.reportValidity();
+        return;
+      }
+
+      if (!contrasenasCoinciden) {
+        evento.preventDefault();
+        confirmarContrasena.reportValidity();
+      }
+    });
+
+    actualizarEstadoRegistro();
+  </script>
+</body>
+</html>

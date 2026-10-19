@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Restablecer contraseña | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+</head>
+<body>
+  <p>La página se ha movido. <a id="enlace" href="restaurarContraseña.html">Continúa aquí</a>.</p>
+  <script>
+    const destino = "restaurarContraseña.html" + window.location.search;
+    document.getElementById("enlace").href = destino;
+    window.location.replace(destino);
+  </script>
+</body>
+</html>

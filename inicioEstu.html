@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Orientación | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="inicioEstu.css">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="index.html">PORTALINK</a>
+    <div class="usuario">
+      <span id="saludo">Mi espacio</span>
+      <button class="boton-secundario" id="cerrarSesion" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="contenido">
+    <section class="bienvenida">
+      <p class="sobretitulo">TU ESPACIO DE ORIENTACIÓN</p>
+      <h1>Hola, <span id="nombreEstudiante">estudiante</span></h1>
+      <p id="gradoEstudiante">Buscando orientadores para tu grado...</p>
+    </section>
+
+    <div class="mensaje" id="mensaje" role="status" aria-live="polite" hidden></div>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <p class="sobretitulo">ACOMPAÑAMIENTO</p>
+          <h2>Psicorientadores de tu grado</h2>
+        </div>
+      </div>
+      <div class="tarjetas" id="orientadores"></div>
+    </section>
+
+    <section class="seccion">
+      <div class="titulo-seccion">
+        <div>
+          <p class="sobretitulo">SEGUIMIENTO</p>
+          <h2>Mis solicitudes de cita</h2>
+        </div>
+      </div>
+      <div class="lista-citas" id="misCitas"></div>
+    </section>
+  </main>
+
+  <script src="portalink.js"></script>
+  <script>
+    const mensaje = document.getElementById("mensaje");
+    const contenedorOrientadores = document.getElementById("orientadores");
+    const listaCitas = document.getElementById("misCitas");
+
+    function renderizarOrientadores(orientadores) {
+      if (orientadores.length === 0) {
+        contenedorOrientadores.innerHTML =
+          '<p class="vacio">Todavía no hay psicorientadores disponibles para tu grado. Consulta más adelante con la administración de PORTALINK.</p>';
+        return;
+      }
+
+      contenedorOrientadores.innerHTML = orientadores.map((persona) => {
+        const foto = persona.foto_url
+          ? `<img src="${Portalink.escapar(persona.foto_url)}" alt="Foto de ${Portalink.escapar(persona.nombre)}" loading="lazy">`
+          : '<div class="avatar" aria-hidden="true">P</div>';
+        const modalidades = [];
+        if (Number(persona.permite_virtual)) modalidades.push(["virtual", "Agendar cita virtual"]);
+        if (Number(persona.permite_presencial)) modalidades.push(["presencial", "Agendar cita presencial"]);
+
+        return `
+          <article class="tarjeta-orientador">
+            ${foto}
+            <div class="contenido-tarjeta">
+              <h3>${Portalink.escapar(persona.nombre)}</h3>
+              <p>${Portalink.escapar(persona.descripcion)}</p>
+              <details>
+                <summary>Elegir un horario</summary>
+                <form class="formulario-cita" data-orientador="${Number(persona.id)}">
+                  <label>Fecha y hora
+                    <input type="datetime-local" name="fecha_inicio" required>
+                  </label>
+                  <label>Cuéntanos brevemente qué necesitas
+                    <textarea name="motivo" rows="3" maxlength="2000" required></textarea>
+                  </label>
+                  <div class="acciones-modalidad">
+                    ${modalidades.map(([valor, etiqueta]) =>
+                      `<button class="boton-principal" type="submit" data-modalidad="${valor}">${etiqueta}</button>`
+                    ).join("")}
+                  </div>
+                </form>
+              </details>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      for (const form of contenedorOrientadores.querySelectorAll(".formulario-cita")) {
+        const entradaFecha = form.elements.fecha_inicio;
+        const ahora = new Date(Date.now() + 60 * 60 * 1000);
+        entradaFecha.min = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+          .toISOString().slice(0, 16);
+
+        form.addEventListener("submit", async (evento) => {
+          evento.preventDefault();
+          const boton = evento.submitter;
+          boton.disabled = true;
+          try {
+            const resultado = await Portalink.api("crear_cita", {
+              orientador_id: Number(form.dataset.orientador),
+              fecha_inicio: entradaFecha.value,
+              modalidad: boton.dataset.modalidad,
+              motivo: form.elements.motivo.value
+            });
+            Portalink.mostrarMensaje(
+              mensaje,
+              resultado.message,
+              resultado.email_sent === false ? "error" : "exito"
+            );
+            form.reset();
+            form.closest("details").open = false;
+            await cargarDatos();
+          } catch (error) {
+            Portalink.mostrarMensaje(mensaje, error.message);
+          } finally {
+            boton.disabled = false;
+          }
+        });
+      }
+    }
+
+    function renderizarCitas(citas) {
+      if (citas.length === 0) {
+        listaCitas.innerHTML = '<p class="vacio">Aún no tienes solicitudes de cita.</p>';
+        return;
+      }
+
+      listaCitas.innerHTML = citas.map((cita) => `
+        <article class="cita-estudiante">
+          <div>
+            <h3>${Portalink.escapar(cita.orientador)}</h3>
+            <p>${Portalink.fechaLegible(cita.fecha_inicio, {
+              weekday: "long", day: "numeric", month: "long",
+              year: "numeric", hour: "2-digit", minute: "2-digit"
+            })} · ${Portalink.escapar(cita.modalidad)}</p>
+            <p>${Portalink.escapar(cita.motivo)}</p>
+          </div>
+          <span class="estado ${Portalink.escapar(cita.estado)}">${Portalink.escapar(cita.estado)}</span>
+        </article>
+      `).join("");
+    }
+
+    async function cargarDatos() {
+      const resultado = await Portalink.api("datos_panel");
+      document.getElementById("nombreEstudiante").textContent =
+        `${resultado.perfil.nombre} ${resultado.perfil.apellidos}`;
+      document.getElementById("saludo").textContent =
+        `${resultado.perfil.nombre} ${resultado.perfil.apellidos}`;
+      document.getElementById("gradoEstudiante").textContent =
+        `Grado ${resultado.perfil.grado}`;
+      renderizarOrientadores(resultado.orientadores);
+      renderizarCitas(resultado.citas);
+    }
+
+    (async function iniciar() {
+      try {
+        await Portalink.obtenerSesion("estudiante");
+        await cargarDatos();
+      } catch (error) {
+        if (!mensaje.hidden) return;
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    })();
+
+    document.getElementById("cerrarSesion").addEventListener("click", async () => {
+      try {
+        await Portalink.cerrarSesion();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    });
+  </script>
+</body>
+</html>

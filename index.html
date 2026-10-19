@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <nav class="barra">
+    <div class="nav-wrapper">
+      <a href="index.html" class="marca" aria-label="Inicio">
+        <img src="icono.png" alt="Inicio" class="icono-nav">
+      </a>
+
+      <a
+        href="#"
+        data-target="menu-movil"
+        class="sidenav-trigger right hide-on-med-and-up"
+        aria-label="Abrir menú"
+      >
+        <i class="material-icons">menu</i>
+      </a>
+
+      <ul class="right hide-on-small-only">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li>
+          <a href="iniciarsesion.html">
+            Iniciar sesión
+            <i class="material-icons right">account_circle</i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="menu-movil">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li>
+      <a href="iniciarsesion.html">
+        <i class="material-icons">account_circle</i>
+        Iniciar sesión
+      </a>
+    </li>
+  </ul>
+
+  <main>
+    <section class="imgPrincipal">
+      <img class="fondo" src="fondo.png" alt="Fondo principal">
+      <img class="logo" src="logo.png" alt="Logo">
+
+      <button
+        class="registrarse"
+        type="button"
+        onclick="window.location.href='registrarse.html'"
+      >
+        Registrarse
+      </button>
+    </section>
+
+    <section class="about-intro reveal" id="nosotros">
+      <div class="about-wrap about-grid">
+        <div class="about-copy">
+          <p class="eyebrow">SOBRE PORTALINK</p>
+          <h2>La orientación,<br>más cerca de ti.</h2>
+          <p>
+            PORTALINK busca facilitar el acceso de los estudiantes a la
+            psicorientación escolar y organizar las solicitudes de citas en un
+            solo lugar.
+          </p>
+          <a class="about-link" href="#problema">
+            Conoce más
+            <span class="material-icons-outlined" aria-hidden="true">arrow_forward</span>
+          </a>
+        </div>
+
+        <img
+          class="editorial-image notebook-image"
+          src="portalink1.png"
+          alt="Imagen informativa de PORTALINK"
+        >
+
+        <div class="features-grid">
+          <article class="feature">
+            <span class="material-icons-outlined">calendar_month</span>
+            <h3>Solicita una cita</h3>
+            <p>Organiza tu solicitud de orientación escolar.</p>
+          </article>
+          <article class="feature">
+            <span class="material-icons-outlined">lock</span>
+            <h3>Tu información segura</h3>
+            <p>Accede a tu información de forma reservada.</p>
+          </article>
+          <article class="feature">
+            <span class="material-icons-outlined">menu_book</span>
+            <h3>Recursos de orientación</h3>
+            <p>Encuentra materiales para tu bienestar escolar.</p>
+          </article>
+          <article class="feature">
+            <span class="material-icons-outlined">diversity_3</span>
+            <h3>Apoyo para todos</h3>
+            <p>Un espacio pensado para la comunidad estudiantil.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="story-band reveal" id="problema">
+      <div class="about-wrap story-grid">
+        <div class="story-copy">
+          <p class="eyebrow">EL PROBLEMA</p>
+          <h2>¿Por qué nace PORTALINK?</h2>
+          <p>
+            En ocasiones, acceder a la orientación escolar puede ser difícil y
+            las solicitudes o la información quedan dispersas.
+          </p>
+        </div>
+
+        <img
+          class="editorial-image student-image"
+          src="portalink2.png"
+          alt="Imagen sobre la orientación escolar"
+        >
+
+        <div class="story-copy solution-copy">
+          <p class="eyebrow">NUESTRA SOLUCIÓN</p>
+          <h2>Una plataforma pensada para ti.</h2>
+          <p>
+            PORTALINK busca reunir el acceso a la orientación y facilitar la
+            gestión de solicitudes desde un mismo espacio.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-band reveal">
+      <div class="about-wrap trust-grid">
+        <div class="trust-intro">
+          <span class="material-icons-outlined trust-shield">verified_user</span>
+          <p class="eyebrow">CONFIANZA</p>
+          <h2>Tu información,<br>en buenas manos</h2>
+          <p>
+            Promovemos el respeto, la privacidad y el cuidado de la información.
+          </p>
+        </div>
+
+        <article class="trust-principle">
+          <span class="material-icons-outlined">admin_panel_settings</span>
+          <h3>Acceso autorizado</h3>
+          <p>La información se trata con responsabilidad.</p>
+        </article>
+        <article class="trust-principle">
+          <span class="material-icons-outlined">shield</span>
+          <h3>Protección de datos</h3>
+          <p>La privacidad es parte central del proyecto.</p>
+        </article>
+        <article class="trust-principle">
+          <span class="material-icons-outlined">handshake</span>
+          <h3>Trato respetuoso</h3>
+          <p>Un espacio de orientación basado en el respeto.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      M.Sidenav.init(document.querySelectorAll(".sidenav"));
+    });
+  </script>
+</body>
+</html>

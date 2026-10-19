@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Crear nueva contraseña | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="restaurarContraseña.css">
+</head>
+<body>
+  <a class="volver" href="iniciarsesion.html"><span class="material-icons" aria-hidden="true">arrow_back</span>Iniciar sesión</a>
+  <main class="tarjeta">
+    <header class="encabezado">
+      <p>PORTALINK · RECUPERACIÓN</p>
+      <h1>Crear nueva contraseña</h1>
+      <span>Elige una contraseña segura para volver a acceder a tu cuenta.</span>
+    </header>
+    <div class="mensaje-formulario" id="mensaje" role="status" aria-live="polite" hidden></div>
+    <form id="formulario" action="restablecer_contrasena.php" method="post">
+      <input type="hidden" id="token" name="token">
+      <div class="campo">
+        <label for="contrasena">Nueva contraseña</label>
+        <input type="password" id="contrasena" name="contrasena" autocomplete="new-password" minlength="8" required>
+      </div>
+      <div class="campo">
+        <label for="confirmar">Confirmar contraseña</label>
+        <input type="password" id="confirmar" name="confirmar_contrasena" autocomplete="new-password" minlength="8" required>
+      </div>
+      <p class="ayuda">Usa al menos 8 caracteres, una minúscula, una mayúscula, un número y un símbolo.</p>
+      <button class="boton-principal" id="boton" type="submit">Guardar contraseña</button>
+    </form>
+  </main>
+  <script>
+    const formulario = document.getElementById("formulario");
+    const boton = document.getElementById("boton");
+    const mensaje = document.getElementById("mensaje");
+    const token = new URLSearchParams(location.search).get("token");
+    const contrasena = document.getElementById("contrasena");
+    const confirmar = document.getElementById("confirmar");
+
+    if (token) {
+      document.getElementById("token").value = token;
+    } else {
+      formulario.hidden = true;
+      mensaje.textContent = "El enlace no es válido o está incompleto. Solicita uno nuevo.";
+      mensaje.hidden = false;
+    }
+
+    formulario.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      mensaje.hidden = true;
+      if (contrasena.value !== confirmar.value) {
+        confirmar.setCustomValidity("Las contraseñas no coinciden.");
+        confirmar.reportValidity();
+        confirmar.addEventListener("input", () => confirmar.setCustomValidity(""), { once: true });
+        return;
+      }
+      boton.disabled = true;
+      boton.textContent = "Guardando...";
+      try {
+        const respuesta = await fetch(formulario.action, {
+          method: "POST",
+          body: new FormData(formulario),
+          headers: { Accept: "application/json" }
+        });
+        const resultado = await respuesta.json();
+        if (!respuesta.ok || !resultado.success) {
+          throw new Error(resultado.message || "No se pudo cambiar la contraseña.");
+        }
+        mensaje.textContent = resultado.message;
+        mensaje.classList.add("exito");
+        mensaje.hidden = false;
+        formulario.hidden = true;
+      } catch (error) {
+        mensaje.textContent = error instanceof Error
+          ? error.message
+          : "No se pudo conectar con el servidor. Inténtalo de nuevo.";
+        mensaje.hidden = false;
+      } finally {
+        boton.disabled = false;
+        boton.textContent = "Guardar contraseña";
+      }
+    });
+  </script>
+</body>
+</html>

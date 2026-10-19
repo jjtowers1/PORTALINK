@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Agenda de orientación | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="inicioAdm.css">
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="index.html">PORTALINK</a>
+    <div class="usuario">
+      <span>Agenda de <strong id="nombreOrientador">orientación</strong></span>
+      <button class="boton-secundario" id="cerrarSesion" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="contenido">
+    <section class="encabezado">
+      <p class="sobretitulo">AGENDA DE ORIENTACIÓN</p>
+      <h1>Tus citas</h1>
+      <p>Revisa las solicitudes, gestiona los horarios y registra de forma privada el descargo de cada atención.</p>
+    </section>
+
+    <div class="mensaje" id="mensaje" role="status" aria-live="polite" hidden></div>
+
+    <section class="panel-calendario">
+      <div class="controles-calendario">
+        <div>
+          <p class="sobretitulo">CALENDARIO</p>
+          <h2 id="mesActual"></h2>
+        </div>
+        <div class="controles">
+          <button class="boton-secundario" id="mesAnterior" type="button" aria-label="Mes anterior">‹</button>
+          <button class="boton-secundario" id="mesSiguiente" type="button" aria-label="Mes siguiente">›</button>
+        </div>
+      </div>
+      <div class="calendario" id="calendario"></div>
+    </section>
+
+    <section class="seccion-citas">
+      <div class="titulo-lista">
+        <div>
+          <p class="sobretitulo">DETALLE</p>
+          <h2 id="tituloDia">Citas del mes</h2>
+        </div>
+        <button class="boton-secundario" id="verTodas" type="button">Ver el mes</button>
+      </div>
+      <div class="lista-citas" id="listaCitas"></div>
+    </section>
+  </main>
+
+  <script src="portalink.js"></script>
+  <script>
+    const mensaje = document.getElementById("mensaje");
+    const calendario = document.getElementById("calendario");
+    const listaCitas = document.getElementById("listaCitas");
+    const mesTitulo = document.getElementById("mesActual");
+    let citas = [];
+    let mesViendo = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    let diaSeleccionado = null;
+
+    function fechaClave(valor) {
+      return String(valor).slice(0, 10);
+    }
+
+    function renderizarCalendario() {
+      mesTitulo.textContent = new Intl.DateTimeFormat("es", {
+        month: "long",
+        year: "numeric"
+      }).format(mesViendo);
+
+      const diasSemana = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+      const primerDia = new Date(mesViendo.getFullYear(), mesViendo.getMonth(), 1);
+      const desplazamiento = (primerDia.getDay() + 6) % 7;
+      const cantidadDias = new Date(
+        mesViendo.getFullYear(),
+        mesViendo.getMonth() + 1,
+        0
+      ).getDate();
+      const celdas = diasSemana.map((dia) => `<div class="dia-semana">${dia}</div>`);
+
+      for (let i = 0; i < desplazamiento; i++) {
+        celdas.push('<div class="dia-calendario vacio-dia" aria-hidden="true"></div>');
+      }
+
+      for (let dia = 1; dia <= cantidadDias; dia++) {
+        const fecha = new Date(mesViendo.getFullYear(), mesViendo.getMonth(), dia);
+        const clave = [
+          fecha.getFullYear(),
+          String(fecha.getMonth() + 1).padStart(2, "0"),
+          String(dia).padStart(2, "0")
+        ].join("-");
+        const conteo = citas.filter((cita) => fechaClave(cita.fecha_inicio) === clave).length;
+        const seleccionado = diaSeleccionado === clave ? " seleccionado" : "";
+        celdas.push(`
+          <button class="dia-calendario${conteo ? " tiene-citas" : ""}${seleccionado}"
+                  type="button" data-fecha="${clave}"
+                  aria-label="${dia} de ${Portalink.escapar(mesTitulo.textContent)}${conteo ? `, ${conteo} citas` : ""}">
+            <span>${dia}</span>
+            ${conteo ? `<small>${conteo} cita${conteo === 1 ? "" : "s"}</small>` : ""}
+          </button>
+        `);
+      }
+
+      calendario.innerHTML = celdas.join("");
+      calendario.querySelectorAll("[data-fecha]").forEach((boton) => {
+        boton.addEventListener("click", () => {
+          diaSeleccionado = boton.dataset.fecha;
+          renderizarCalendario();
+          renderizarLista();
+        });
+      });
+    }
+
+    function renderizarLista() {
+      const citasDelMes = citas.filter((cita) => {
+        const fecha = Portalink.fechaLocal(cita.fecha_inicio);
+        return fecha.getFullYear() === mesViendo.getFullYear() &&
+          fecha.getMonth() === mesViendo.getMonth();
+      });
+      const visibles = diaSeleccionado
+        ? citasDelMes.filter((cita) => fechaClave(cita.fecha_inicio) === diaSeleccionado)
+        : citasDelMes;
+
+      document.getElementById("tituloDia").textContent = diaSeleccionado
+        ? `Citas del ${Portalink.fechaLegible(`${diaSeleccionado} 12:00:00`, {
+          day: "numeric", month: "long", year: "numeric"
+        })}`
+        : "Citas del mes";
+
+      if (visibles.length === 0) {
+        listaCitas.innerHTML = '<p class="vacio">No hay citas para esta fecha.</p>';
+        return;
+      }
+
+      listaCitas.innerHTML = visibles.map((cita) => {
+        const acciones = cita.estado === "pendiente"
+          ? `<div class="acciones">
+               <button class="boton-principal" data-decision="aceptada" data-id="${Number(cita.id)}">Aceptar cita</button>
+               <button class="boton-rechazar" data-decision="rechazada" data-id="${Number(cita.id)}">Rechazar</button>
+             </div>`
+          : "";
+        const descargo = cita.estado === "aceptada"
+          ? `<form class="formulario-descargo" data-id="${Number(cita.id)}">
+               <label for="descargo-${Number(cita.id)}">Descargo privado de la atención</label>
+               <textarea id="descargo-${Number(cita.id)}" name="descargo" rows="4" maxlength="10000" placeholder="Registra fecha y hora, situación presentada, observaciones, acuerdos y seguimiento." required>${Portalink.escapar(cita.descargo_privado || "")}</textarea>
+               <p>Solo tú puedes ver este registro. No es visible para el estudiante ni para administración.</p>
+               <button class="boton-principal" type="submit">Guardar como atención realizada</button>
+             </form>`
+          : cita.estado === "realizada" && cita.descargo_privado
+            ? `<div class="nota-privada"><strong>Descargo privado</strong><p>${Portalink.escapar(cita.descargo_privado)}</p></div>`
+            : "";
+        return `
+          <article class="cita">
+            <div class="cita-principal">
+              <div>
+                <h3>${Portalink.escapar(cita.estudiante_nombre)} ${Portalink.escapar(cita.apellidos)}</h3>
+                <p>${Portalink.fechaLegible(cita.fecha_inicio, {
+                  weekday: "long", day: "numeric", month: "long",
+                  year: "numeric", hour: "2-digit", minute: "2-digit"
+                })} · ${Portalink.escapar(cita.modalidad)}</p>
+                <p class="motivo"><strong>Motivo indicado:</strong> ${Portalink.escapar(cita.motivo)}</p>
+              </div>
+              <span class="estado ${Portalink.escapar(cita.estado)}">${Portalink.escapar(cita.estado)}</span>
+            </div>
+            ${acciones}
+            ${descargo}
+          </article>
+        `;
+      }).join("");
+
+      listaCitas.querySelectorAll("[data-decision]").forEach((boton) => {
+        boton.addEventListener("click", async () => {
+          boton.disabled = true;
+          try {
+            const resultado = await Portalink.api("decidir_cita", {
+              cita_id: Number(boton.dataset.id),
+              decision: boton.dataset.decision
+            });
+            Portalink.mostrarMensaje(
+              mensaje,
+              resultado.message,
+              resultado.email_sent === false ? "error" : "exito"
+            );
+            await cargarCitas();
+          } catch (error) {
+            Portalink.mostrarMensaje(mensaje, error.message);
+            boton.disabled = false;
+          }
+        });
+      });
+
+      listaCitas.querySelectorAll(".formulario-descargo").forEach((form) => {
+        form.addEventListener("submit", async (evento) => {
+          evento.preventDefault();
+          const boton = form.querySelector("button");
+          boton.disabled = true;
+          try {
+            const resultado = await Portalink.api("guardar_descargo", {
+              cita_id: Number(form.dataset.id),
+              descargo: form.elements.descargo.value
+            });
+            Portalink.mostrarMensaje(mensaje, resultado.message, "exito");
+            await cargarCitas();
+          } catch (error) {
+            Portalink.mostrarMensaje(mensaje, error.message);
+            boton.disabled = false;
+          }
+        });
+      });
+    }
+
+    async function cargarCitas() {
+      const resultado = await Portalink.api("datos_panel");
+      citas = resultado.citas;
+      renderizarCalendario();
+      renderizarLista();
+    }
+
+    document.getElementById("mesAnterior").addEventListener("click", () => {
+      mesViendo = new Date(mesViendo.getFullYear(), mesViendo.getMonth() - 1, 1);
+      diaSeleccionado = null;
+      renderizarCalendario();
+      renderizarLista();
+    });
+    document.getElementById("mesSiguiente").addEventListener("click", () => {
+      mesViendo = new Date(mesViendo.getFullYear(), mesViendo.getMonth() + 1, 1);
+      diaSeleccionado = null;
+      renderizarCalendario();
+      renderizarLista();
+    });
+    document.getElementById("verTodas").addEventListener("click", () => {
+      diaSeleccionado = null;
+      renderizarCalendario();
+      renderizarLista();
+    });
+    document.getElementById("cerrarSesion").addEventListener("click", async () => {
+      try {
+        await Portalink.cerrarSesion();
+      } catch (error) {
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    });
+
+    (async function iniciar() {
+      try {
+        const sesion = await Portalink.obtenerSesion("orientador");
+        document.getElementById("nombreOrientador").textContent = sesion.nombre;
+        await cargarCitas();
+      } catch (error) {
+        if (!mensaje.hidden) return;
+        Portalink.mostrarMensaje(mensaje, error.message);
+      }
+    })();
+  </script>
+</body>
+</html>

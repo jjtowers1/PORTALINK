@@ -1,0 +1,195 @@
+:root {
+  font-family: "Manrope", sans-serif;
+  color: #263238;
+  background: #f5f7f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  margin: 0;
+  padding: 80px 20px 32px;
+}
+
+.volver {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #183b36;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.volver .material-icons {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgb(24 59 54 / 18%);
+  border-radius: 50%;
+}
+
+.tarjeta {
+  width: min(460px, 100%);
+  padding: 38px;
+  border: 1px solid rgb(24 59 54 / 12%);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.encabezado {
+  margin-bottom: 28px;
+}
+
+.encabezado p {
+  margin: 0 0 8px;
+  color: #47766f;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.encabezado h1 {
+  margin: 0 0 8px;
+  color: #183b36;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.encabezado span {
+  color: #65736f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.campo input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #263238;
+  font: inherit;
+  font-size: 14px;
+}
+
+.campo input:focus {
+  border-color: #47766f;
+  outline: 3px solid rgb(168 218 220 / 45%);
+}
+
+.enlace-olvido {
+  display: inline-block;
+  margin: 0 0 22px;
+  color: #285b53;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.boton-principal {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 6px;
+  background: #183b36;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+.boton-principal:hover:not(:disabled) {
+  background: #285b53;
+}
+
+.boton-principal:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.mensaje-formulario {
+  margin: 0 0 20px;
+  padding: 13px 15px;
+  border: 1px solid #e7c5bd;
+  border-radius: 8px;
+  background: #fbf1ee;
+  color: #803f32;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mensaje-formulario[hidden] {
+  display: none;
+}
+
+.pie-tarjeta {
+  margin: 24px 0 0;
+  color: #65736f;
+  font-size: 13px;
+  text-align: center;
+}
+
+.pie-tarjeta a {
+  color: #285b53;
+  font-weight: 700;
+}
+
+.volver:focus-visible,
+.enlace-olvido:focus-visible,
+.pie-tarjeta a:focus-visible,
+.boton-principal:focus-visible {
+  outline: 3px solid #a8dadc;
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  body {
+    padding: 72px 16px 24px;
+  }
+
+  .volver {
+    top: 16px;
+    left: 16px;
+  }
+
+  .tarjeta {
+    padding: 28px 22px;
+  }
+
+  .encabezado h1 {
+    font-size: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

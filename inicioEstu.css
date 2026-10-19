@@ -1,0 +1,310 @@
+:root {
+  font-family: "Manrope", sans-serif;
+  color: #263238;
+  background: #f5f7f4;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+}
+
+.barra {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px max(22px, calc((100vw - 1120px) / 2));
+  border-bottom: 1px solid rgb(24 59 54 / 12%);
+  background: #fff;
+}
+
+.marca {
+  color: #183b36;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-decoration: none;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #52635e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.contenido {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 54px 22px 72px;
+}
+
+.bienvenida {
+  margin-bottom: 42px;
+}
+
+.sobretitulo {
+  margin: 0 0 8px;
+  color: #47766f;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.bienvenida h1 {
+  margin: 0 0 8px;
+  color: #183b36;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.2;
+}
+
+.bienvenida > p:last-child {
+  margin: 0;
+  color: #65736f;
+}
+
+.seccion {
+  margin-top: 42px;
+}
+
+.titulo-seccion {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.titulo-seccion h2 {
+  margin: 0;
+  color: #183b36;
+  font-size: 23px;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 18px;
+}
+
+.tarjeta-orientador {
+  overflow: hidden;
+  border: 1px solid rgb(24 59 54 / 12%);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.tarjeta-orientador > img,
+.avatar {
+  display: grid;
+  width: 100%;
+  height: 190px;
+  place-items: center;
+  object-fit: cover;
+  background: #e7f0ec;
+  color: #47766f;
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.contenido-tarjeta {
+  padding: 20px;
+}
+
+.contenido-tarjeta h3,
+.cita-estudiante h3 {
+  margin: 0 0 8px;
+  color: #183b36;
+  font-size: 18px;
+}
+
+.contenido-tarjeta > p {
+  min-height: 44px;
+  margin: 0 0 18px;
+  color: #65736f;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+details {
+  border-top: 1px solid #e5ebe8;
+  padding-top: 14px;
+}
+
+summary {
+  color: #285b53;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.formulario-cita {
+  display: grid;
+  gap: 13px;
+  margin-top: 16px;
+}
+
+.formulario-cita label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.formulario-cita input,
+.formulario-cita textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid #cbd5d1;
+  border-radius: 6px;
+  color: #263238;
+  font: inherit;
+  font-size: 13px;
+}
+
+.formulario-cita input:focus,
+.formulario-cita textarea:focus {
+  border-color: #47766f;
+  outline: 3px solid rgb(168 218 220 / 45%);
+}
+
+.acciones-modalidad {
+  display: grid;
+  gap: 9px;
+}
+
+.boton-principal,
+.boton-secundario {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #183b36;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-principal:hover,
+.boton-secundario:hover {
+  background: #285b53;
+}
+
+.boton-secundario {
+  border: 1px solid #cbd5d1;
+  background: #fff;
+  color: #183b36;
+}
+
+.lista-citas {
+  display: grid;
+  gap: 12px;
+}
+
+.cita-estudiante {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgb(24 59 54 / 12%);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.cita-estudiante p {
+  margin: 5px 0 0;
+  color: #65736f;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.estado {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f0f1e8;
+  color: #52635e;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.estado.aceptada,
+.estado.realizada {
+  background: #e5f3eb;
+  color: #246b52;
+}
+
+.estado.rechazada {
+  background: #fbf1ee;
+  color: #803f32;
+}
+
+.vacio {
+  margin: 0;
+  padding: 20px;
+  border: 1px dashed #cbd5d1;
+  border-radius: 10px;
+  color: #65736f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mensaje {
+  margin: 0 0 20px;
+  padding: 13px 15px;
+  border: 1px solid #e7c5bd;
+  border-radius: 8px;
+  background: #fbf1ee;
+  color: #803f32;
+  font-size: 14px;
+}
+
+.mensaje.exito {
+  border-color: #b8dccc;
+  background: #edf7f1;
+  color: #183b36;
+}
+
+.mensaje[hidden] {
+  display: none;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+@media (max-width: 580px) {
+  .barra {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 18px;
+  }
+
+  .usuario {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .contenido {
+    padding: 36px 16px 56px;
+  }
+
+  .cita-estudiante {
+    flex-direction: column;
+  }
+}

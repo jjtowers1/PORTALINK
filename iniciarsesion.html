@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7f4">
+  <title>Iniciar sesión | PORTALINK</title>
+  <link rel="icon" type="image/png" href="simbolopaginas.png">
+  <link rel="shortcut icon" href="simbolopaginas.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="iniciarsesion.css">
+</head>
+<body>
+  <a class="volver" href="index.html"><span class="material-icons" aria-hidden="true">arrow_back</span>Volver</a>
+  <main class="tarjeta">
+    <header class="encabezado">
+      <p>PORTALINK · ACCESO</p>
+      <h1>Iniciar sesión</h1>
+      <span>Estudiantes: código o correo. Orientadores y administración: usuario o correo.</span>
+    </header>
+    <div class="mensaje-formulario" id="mensaje" role="status" aria-live="polite" hidden></div>
+    <form id="formulario" action="iniciar_sesion.php" method="post">
+      <div class="campo">
+        <label for="identificador">Código de estudiante, usuario o correo</label>
+        <input type="text" id="identificador" name="identificador" autocomplete="username" maxlength="150" required>
+      </div>
+      <div class="campo">
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" name="contrasena" autocomplete="current-password" required>
+      </div>
+      <a class="enlace-olvido" href="contraseñaOlvidada.html">¿Olvidaste tu contraseña?</a>
+      <button class="boton-principal" id="boton" type="submit">Iniciar sesión</button>
+    </form>
+    <p class="pie-tarjeta">¿Aún no tienes una cuenta? <a href="registrarse.html">Regístrate</a></p>
+  </main>
+  <script>
+    const formulario = document.getElementById("formulario");
+    const boton = document.getElementById("boton");
+    const mensaje = document.getElementById("mensaje");
+
+    if (new URLSearchParams(location.search).get("error") === "sesion") {
+      mensaje.textContent = "Inicia sesión para continuar.";
+      mensaje.hidden = false;
+    }
+
+    formulario.addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+      mensaje.hidden = true;
+      boton.disabled = true;
+      boton.textContent = "Ingresando...";
+
+      try {
+        const respuesta = await fetch(formulario.action, {
+          method: "POST",
+          body: new FormData(formulario),
+          headers: { Accept: "application/json" }
+        });
+        const resultado = await respuesta.json();
+        if (!respuesta.ok || !resultado.success) {
+          throw new Error(resultado.message || "No se pudo iniciar sesión.");
+        }
+        location.assign(resultado.redirect);
+      } catch (error) {
+        mensaje.textContent = error instanceof Error
+          ? error.message
+          : "No se pudo conectar con el servidor. Inténtalo de nuevo.";
+        mensaje.hidden = false;
+      } finally {
+        boton.disabled = false;
+        boton.textContent = "Iniciar sesión";
+      }
+    });
+  </script>
+</body>
+</html>
